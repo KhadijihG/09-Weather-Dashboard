@@ -8,34 +8,34 @@ dotenv.config();
 // }
 
 // TODO: Define a class for the Weather object
-// class Weather {
-//   city: string;
-//   date: string;
-//   icon: string;
-//   iconDescription: string;
-//   tempF: number;
-//   windSpeed: number;
-//   humidity: number;
+class Weather {
+  city: string;
+  date: string;
+  icon: string;
+  iconDescription: string;
+  tempF: number;
+  windSpeed: number;
+  humidity: number;
 
-//   constructor(
-//     city: string,
-//     date: string,
-//     icon: string,
-//     iconDescription: string,
-//     tempF: number,
-//     windSpeed: number,
-//     humidity: number
-//   ) {
-//     this.city = city;
-//     this.date = date;
-//     this.icon = icon;
-//     this.iconDescription = iconDescription;
-//     this.tempF = tempF;
-//     this.windSpeed = windSpeed;
-//     this.humidity = humidity;
-//   }
+  constructor(
+    city: string,
+    date: string,
+    icon: string,
+    iconDescription: string,
+    tempF: number,
+    windSpeed: number,
+    humidity: number
+  ) {
+    this.city = city;
+    this.date = date;
+    this.icon = icon;
+    this.iconDescription = iconDescription;
+    this.tempF = tempF;
+    this.windSpeed = windSpeed;
+    this.humidity = humidity;
+  }
 
-// }
+}
 
 // TODO: Complete the WeatherService class
 class WeatherService {
@@ -74,10 +74,24 @@ class WeatherService {
   // private buildForecastArray(currentWeather: Weather, weatherData: any[]) {}
   // TODO: Complete getWeatherForCity method
   async getWeatherForCity(city: string) {
-    const url = `${this.baseURL}/weather?q=${city}&appid=${this.APIKey}`
+    const url = `${this.baseURL}/forecast?q=${city}&units=imperial&appid=${this.APIKey}`
   const response = await fetch (url)
-  return response
+  const data = await response.json()
+  console.log(data);
+  const indexes = [0,3,11,19,27,35]
+  const forecast = data.list.filter((_element:any,index:number)=>indexes.includes(index)).map((element:any)=>
+new Weather(
+    data.city.name,
+    element.dt,
+    element.weather[0].icon,
+    element.weather[0].description,
+    element.main.temp,
+    element.wind.speed,
+    element.main.humidity
+)
+)
+  return forecast
 }
 }
 
-export default new WeatherService();
+export default  WeatherService;
